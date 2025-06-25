@@ -1,0 +1,70 @@
+.nameOverlay {
+  position: absolute;
+  top: 50%;
+  left: 47%;
+  transform: translate(-50%, -50%);
+  font-size: 500px;
+  font-family: 'Lucida Handwriting', cursive;
+  font-weight: bold;
+  color: #000;
+}
+
+.classOverlay {
+  position: absolute;
+  top: 58%;
+  left: 33%;
+  transform: translate(-50%, -50%);
+  font-size: 30px;
+  font-family: 'Lucida Handwriting', cursive;
+  color: #000;
+}
+
+.rollOverlay {
+  position: absolute;
+  top: 58%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  font-size: 26px;
+  font-family: 'Lucida Handwriting', cursive;
+  color: #000;
+}
+
+.fatherOverlay {
+  position: absolute;
+  top: 63%;
+  left: 25%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-family: 'Lucida Handwriting', cursive;
+  color: #000;
+}
+
+.eventOverlay {
+  position: absolute;
+  top: 68%;
+  left: 19.4%;
+  transform: translate(-50%, -50%);
+  font-size: 26px;
+  font-family: 'Lucida Handwriting', cursive;
+  color: #000;
+}
+
+.dateOverlay {
+  position: absolute;
+  top: 68%;
+  left: 81%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  font-family: 'Lucida Handwriting', cursive;
+  color: #000;
+}
+
+.rankOverlay {
+  position: absolute;
+  top: 84%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+  font-family: 'Lucida Handwriting', cursive;
+  color: #000;
+}

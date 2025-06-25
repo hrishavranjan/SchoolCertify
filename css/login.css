@@ -1,0 +1,108 @@
+body {
+  background-color: black;
+  background-image: url("../images/login-bg.jpg"); /* ✅ corrected path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden; /* ✅ Prevent scroll from ::before */
+}
+
+/* ✅ Dark overlay over the image */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6); /* semi-transparent black overlay */
+  z-index: -1;
+}
+
+
+
+#homeLink {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+#homeLink:hover {
+  text-decoration: underline;
+  color: #00ccff;
+}
+
+.login-box {
+  background: #f1f1f1;
+  color: black;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 350px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+input {
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  color: black;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* 👁 Password box wrapper */
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* space for eye icon */
+}
+
+button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff4d4d, #ff9900, #00ccff);
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: all 0.4s ease;
+  margin-top: 10px;
+  width: 100%;
+}
+
+button:hover {
+  background-position: right center;
+  box-shadow: 0 0 10px rgba(255, 77, 77, 0.7);
+  transform: scale(1.03);
+}
+
+.extra-links {
+  margin-top: 15px;
+}
+
+.extra-links a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+}
+
+#loginMessage {
+  margin-top: 10px;
+  color: green;
+  font-size: 14px;
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Certificate Generator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="" id="userCertCss" />
+  <link rel="stylesheet" href="css/ui-style.css" />
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    #logoutPopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #111;
+      padding: 30px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      text-align: center;
+      z-index: 9999;
+      color: white;
+      font-size: 16px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to   { opacity: 1; transform: translate(-50%, -50%); }
+    }
+  </style>
+</head>
+<body style="background: black; color: white; text-align: center;">
+
+  <h2 class="gradient-title">Certificate Generator</h2>
+  <p id="userEmail"></p>
+
+  <button id="logoutBtn" onclick="manualLogout()">Logout</button>
+
+  <!-- 🌐 Superuser School Selector -->
+  <div id="schoolSelectorContainer" style="display: none; margin: 15px;">
+    <label style="margin-right: 5px;">Select School:</label>
+    <select id="schoolSelector" onchange="onSuperuserSchoolChange()" style="padding: 8px;">
+      <option value="">--Choose--</option>
+      <option value="ums">UMS</option>
+      <option value="dps">DPS</option>
+      <option value="kv">KV</option>
+      <option value="aps">APS</option>
+      <option value="dav">DAV</option>
+      <option value="stjoseph">St. Joseph</option>
+      <option value="stxaviers">St. Xaviers</option>
+      <option value="greendales">Greendales</option>
+    </select>
+  </div>
+
+  <!-- Certificate Type -->
+  <label>Select Certificate Type:</label>
+  <select id="certType" onchange="onCertTypeChange()">
+    <option value="appreciation">Appreciation</option>
+    <option value="excellence">Excellence</option>
+    <option value="completion">Completion</option>
+    <option value="topper">Topper</option>
+    <option value="future1">Future 1</option>
+    <option value="future2">Future 2</option>
+    <option value="future3">Future 3</option>
+  </select>
+
+  <!-- Certificate Form -->
+  <form id="certForm" style="margin-top: 20px;">
+    <input type="text" id="studentName" placeholder="Student Name" required /><br>
+    <input type="text" id="className" placeholder="Class" required /><br>
+    <input type="text" id="rollNumber" placeholder="Roll Number" required /><br>
+    <input type="text" id="fatherName" placeholder="Father's Name" required /><br>
+    <input type="text" id="eventName" placeholder="Event Name" required /><br>
+    <input type="date" id="date" required /><br>
+    <input type="text" id="rank" placeholder="Rank (for Excellence only)" style="display: none;" /><br>
+    <button type="submit">Generate Certificate</button>
+  </form>
+
+  <!-- Certificate Preview -->
+  <div id="certificate" style="margin: 20px auto; max-width: 900px; display: none; position: relative;">
+    <img id="templateImg" src="" style="width: 100%;" />
+    <div class="overlay nameOverlay" id="o_name">________</div>
+    <div class="overlay classOverlay" id="o_class">________</div>
+    <div class="overlay rollOverlay" id="o_roll">________</div>
+    <div class="overlay fatherOverlay" id="o_father">________</div>
+    <div class="overlay eventOverlay" id="o_event">________</div>
+    <div class="overlay dateOverlay" id="o_date">________</div>
+    <div class="overlay rankOverlay" id="o_rank" style="display: none;">________</div>
+  </div>
+
+  <button id="downloadBtn" style="display: none;">Download Certificate</button>
+
+  <!-- 🔔 Logout popup -->
+  <div id="logoutPopup">✅ You have been logged out due to inactivity.</div>
+
+  <script>
+    const superuserEmail = "hrishavranjan2003@gmail.com";
+    let currentEmail = "";
+    let folderKey = "";
+    let isSuperuser = false;
+
+    const emailMap = {
+      "umssimariwest84722@gmail.com": "ums",
+      "dpsadmin@gmail.com": "dps",
+      "kvschool@gmail.com": "kv",
+      "apsdelhi@gmail.com": "aps"
+    };
+
+    const schoolEmailMap = {
+      "ums": "umssimariwest84722@gmail.com",
+      "dps": "dpsadmin@gmail.com",
+      "kv": "kvschool@gmail.com",
+      "aps": "apsdelhi@gmail.com",
+      "dav": "davschool@gmail.com",
+      "stjoseph": "stjoseph@gmail.com",
+      "stxaviers": "stxaviers@gmail.com",
+      "greendales": "greendaleschool@gmail.com"
+    };
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) return window.location.href = "login.html";
+      currentEmail = user.email;
+      document.getElementById("userEmail").textContent = "✅ Logged in as: " + currentEmail;
+
+      isSuperuser = currentEmail === superuserEmail;
+
+      if (isSuperuser) {
+        document.getElementById("schoolSelectorContainer").style.display = "block";
+      } else {
+        folderKey = emailMap[currentEmail] || "default";
+        loadTemplateAndCss();
+      }
+    });
+
+    function onSuperuserSchoolChange() {
+      folderKey = document.getElementById("schoolSelector").value;
+      if (!folderKey) return;
+      loadTemplateAndCss();
+    }
+
+    function onCertTypeChange() {
+      const type = document.getElementById("certType").value;
+      document.getElementById("rank").style.display = type === "excellence" ? "inline-block" : "none";
+      loadTemplateAndCss();
+    }
+
+    function loadTemplateAndCss() {
+      const type = document.getElementById("certType").value;
+      const key = folderKey;
+      const emailForTemplate = isSuperuser
+        ? (schoolEmailMap[key] || "superuser")
+        : currentEmail;
+
+      document.getElementById("templateImg").src = `templates/${type}/${emailForTemplate}.png`;
+      document.getElementById("userCertCss").href = `css/${key}/${type}.css`;
+    }
+
+    document.getElementById("certForm").onsubmit = function (e) {
+      e.preventDefault();
+      document.getElementById("o_name").innerText = document.getElementById("studentName").value.trim();
+      document.getElementById("o_class").innerText = document.getElementById("className").value.trim();
+      document.getElementById("o_roll").innerText = document.getElementById("rollNumber").value.trim();
+      document.getElementById("o_father").innerText = document.getElementById("fatherName").value.trim();
+      document.getElementById("o_event").innerText = document.getElementById("eventName").value.trim();
+
+      // ✅ Date format: 25-06-25
+      const rawDate = document.getElementById("date").value;
+      const dateParts = rawDate.split("-");
+      const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0].slice(2)}`;
+      document.getElementById("o_date").innerText = formattedDate;
+
+      const certType = document.getElementById("certType").value;
+      if (certType === "excellence") {
+        document.getElementById("o_rank").innerText = document.getElementById("rank").value.trim();
+        document.getElementById("o_rank").style.display = "block";
+      } else {
+        document.getElementById("o_rank").style.display = "none";
+      }
+
+      document.getElementById("certificate").style.display = "block";
+      document.getElementById("downloadBtn").style.display = "inline-block";
+    };
+
+    document.getElementById("downloadBtn").onclick = () => {
+      html2canvas(document.getElementById("certificate")).then((canvas) => {
+        const name = document.getElementById("studentName").value.trim();
+        const certType = document.getElementById("certType").value;
+        const link = document.createElement("a");
+        link.download = `${name}_${certType}_certificate.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    };
+
+    function manualLogout() {
+      if (confirm("Are you sure you want to logout?")) {
+        firebase.auth().signOut().then(() => {
+          window.location.href = "login.html";
+        });
+      }
+    }
+
+    // ⏳ Inactivity logout with popup
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        document.getElementById("logoutPopup").style.display = "block";
+        setTimeout(() => {
+          firebase.auth().signOut().then(() => {
+            window.location.href = "login.html";
+          });
+        }, 2000);
+      }, 600000);
+    }
+
+    ['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(evt =>
+      window.addEventListener(evt, resetInactivityTimer)
+    );
+    resetInactivityTimer();
+  </script>
+</body>
+</html>

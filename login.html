@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>School Login</title>
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <!-- 🏠 Home redirect -->
+  <a href="index.html" id="homeLink">← Back to Home</a>
+
+  <div class="login-box">
+    <h2>School Login</h2>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="School Email" required />
+
+      <!-- Password Field with 👁️ Icon Toggle -->
+      <div class="password-wrapper" style="position: relative; width: 100%; margin-top: 10px;">
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          required
+          style="width: 100%; padding-right: 40px;"
+        />
+        <span
+          id="togglePassword"
+          title="Show Password"
+          style="
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 16px;
+            color: gray;"
+          onclick="
+            const pwd = document.getElementById('password');
+            const icon = this;
+            if (pwd.type === 'password') {
+              pwd.type = 'text';
+              icon.textContent = '🙈';
+              icon.title = 'Hide Password';
+            } else {
+              pwd.type = 'password';
+              icon.textContent = '👁️';
+              icon.title = 'Show Password';
+            }
+          "
+        >👁️</span>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="loginMessage"></p>
+
+    <div class="extra-links">
+      <a href="#" id="forgotPassword">Forgot Password?</a>
+    </div>
+  </div>
+
+  <!-- 🔒 Password Reset Popup -->
+  <div id="resetPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: white; color: black; padding: 25px; border-radius: 10px; z-index: 9999; width: 300px; box-shadow: 0 0 15px rgba(0,0,0,0.5); text-align: center;">
+    <h3>Reset Password</h3>
+    <input type="email" id="resetEmail" placeholder="Enter your email" style="width: 90%; padding: 8px; margin: 10px 0;" />
+    <div id="resetMessage" style="font-size: 13px; color: red; min-height: 20px;"></div>
+    <button onclick="sendResetEmail()">Send Reset Link</button>
+    <br><br>
+    <button onclick="closePopup()" style="background: gray;">Close</button>
+  </div>
+
+  <!-- ✅ Footer -->
+  <div style="
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    background: #111;
+    font-size: 13px;
+    color: #ccc;
+    font-family: Arial, sans-serif;
+  ">
+    © Hrishav Ranjan · All rights reserved · Built with ❤️
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="firebase-config.js"></script>
+
+  <!-- Login Logic -->
+  <script>
+    // Show Reset Popup
+    document.getElementById("forgotPassword").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("resetPopup").style.display = "block";
+      document.getElementById("resetEmail").value = "";
+      document.getElementById("resetMessage").innerText = "";
+    });
+
+    // Close Reset Popup
+    function closePopup() {
+      document.getElementById("resetPopup").style.display = "none";
+    }
+
+    // Send Reset Email
+    async function sendResetEmail() {
+      const email = document.getElementById("resetEmail").value.trim();
+      const msgBox = document.getElementById("resetMessage");
+
+      if (!email) {
+        msgBox.style.color = "red";
+        msgBox.textContent = "Please enter your email address.";
+        return;
+      }
+
+      try {
+        await firebase.auth().sendPasswordResetEmail(email);
+        msgBox.style.color = "green";
+        msgBox.textContent = "✅ Reset link sent to: " + email + ". Please also check your Spam or Junk folder.";
+      } catch (err) {
+        msgBox.style.color = "red";
+        if (err.code === "auth/user-not-found") {
+          msgBox.innerHTML = "❌ Email not found.<br>📧 Contact admin: hrishavranjan2003@gmail.com<br>📞 9693989969";
+        } else {
+          msgBox.textContent = "Error: " + err.message;
+        }
+      }
+    }
+
+    // Login Logic
+    window.addEventListener("DOMContentLoaded", () => {
+      const loginForm = document.getElementById("loginForm");
+      const loginMessage = document.getElementById("loginMessage");
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const pass = document.getElementById("password").value.trim();
+
+        try {
+          const result = await firebase.auth().signInWithEmailAndPassword(email, pass);
+          loginMessage.textContent = `✅ Logged in as: ${result.user.email}`;
+          setTimeout(() => {
+            window.location.href = "certificate.html";
+          }, 1500);
+        } catch (err) {
+          loginMessage.style.color = "red";
+          loginMessage.textContent = "Login failed: " + err.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

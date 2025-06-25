@@ -1,0 +1,175 @@
+/* General input, select, button */
+input, select, button {
+  padding: 10px;
+  font-size: 16px;
+  margin: 8px auto;
+  border-radius: 6px;
+  border: none;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Gradient animated title */
+.gradient-title {
+  font-size: 42px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ff4d4d, #ff9900, #00ccff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 4s linear infinite;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+@keyframes shine {
+  to {
+    background-position: -200% center;
+  }
+}
+
+/* Inputs and selects - dark theme */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select {
+  width: 60%;
+  max-width: 400px;
+  background-color: #000;
+  color: white;
+  border: 1px solid #444;
+  text-align: center;
+  outline: none;
+  caret-color: white;
+  box-shadow: inset 0 0 5px #222;
+}
+
+/* Autofill fix for Chrome */
+input:-webkit-autofill {
+  background-color: #000 !important;
+  -webkit-box-shadow: 0 0 0 1000px #000 inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+}
+
+/* Buttons */
+button {
+  background: linear-gradient(135deg, #ff4d4d, #ff9900, #00ccff);
+  background-size: 200% auto;
+  color: white;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
+  display: inline-block;
+}
+
+button:hover {
+  background-position: right center;
+  box-shadow: 0 0 20px rgba(255, 77, 77, 0.7);
+  transform: scale(1.03);
+}
+
+/* Logout button */
+#logoutBtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  z-index: 10;
+  padding: 8px 14px;
+}
+
+/* Reset password popup */
+#resetPopup {
+  background: black;
+  color: white;
+  padding: 25px;
+  border-radius: 10px;
+  z-index: 9999;
+  width: 300px;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+#resetPopup input[type="email"] {
+  width: 90%;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: black;
+  color: white;
+}
+
+#resetPopup button {
+  width: 90%;
+  margin-top: 8px;
+}
+
+#resetMessage {
+  font-size: 13px;
+  min-height: 20px;
+  margin-top: 5px;
+}
+
+/* Certificate preview container */
+#certificate {
+  max-width: 900px;
+  margin: 30px auto;
+  display: none;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Overlay text inside certificate */
+.overlay {
+  position: absolute;
+  color: black;
+  font-weight: bold;
+  font-size: 20px;
+  text-shadow: 1px 1px 2px white;
+}
+
+/* Superuser dropdown section */
+#schoolSelectorContainer {
+  margin: 15px auto;
+}
+
+#schoolSelectorContainer label,
+label[for="certType"] {
+  display: block;
+  text-align: center;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Dropdowns: school and certificate type */
+#schoolSelector,
+#certType {
+  width: 60%;
+  max-width: 400px;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  margin: 10px auto;
+}
+
+#schoolSelector:hover,
+#certType:hover {
+  background-color: #111;
+  box-shadow: 0 0 8px rgba(0, 204, 255, 0.3);
+}
