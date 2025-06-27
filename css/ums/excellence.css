@@ -3,7 +3,7 @@
   top: 49.5%;
   left: 47%;
   transform: translate(-50%, -50%);
-  font-size: 30px;
+  font-size: 50px;
   font-family: 'Lucida Handwriting', cursive;
   font-weight: bold;
   color: #000;
@@ -22,7 +22,7 @@
 .rollOverlay {
   position: absolute;
   top: 56%;
-  left: 55%;
+  left: 59%;
   transform: translate(-50%, -50%);
   font-size: 26px;
   font-family: 'Lucida Handwriting', cursive;
@@ -32,7 +32,7 @@
 .fatherOverlay {
   position: absolute;
   top: 61%;
-  left: 31%;
+  left: 37%;
   transform: translate(-50%, -50%);
   font-size: 24px;
   font-family: 'Lucida Handwriting', cursive;
@@ -42,7 +42,7 @@
 .eventOverlay {
   position: absolute;
   top: 66%;
-  left: 41%;
+  left: 56.5%;
   transform: translate(-50%, -50%);
   font-size: 26px;
   font-family: 'Lucida Handwriting', cursive;
@@ -52,7 +52,7 @@
 .dateOverlay {
   position: absolute;
   top: 71%;
-  left: 34%;
+  left: 37%;
   transform: translate(-50%, -50%);
   font-size: 22px;
   font-family: 'Lucida Handwriting', cursive;

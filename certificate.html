@@ -1,3 +1,4 @@
+<!-- Add this in your <body> as-is — already includes reset functionality -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +7,9 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="" id="userCertCss" />
   <link rel="stylesheet" href="css/ui-style.css" />
-
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="firebase-config.js"></script>
-
-  <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -43,10 +40,9 @@
 
   <h2 class="gradient-title">Certificate Generator</h2>
   <p id="userEmail"></p>
-
   <button id="logoutBtn" onclick="manualLogout()">Logout</button>
 
-  <!-- 🌐 Superuser School Selector -->
+  <!-- Superuser School Selector -->
   <div id="schoolSelectorContainer" style="display: none; margin: 15px;">
     <label style="margin-right: 5px;">Select School:</label>
     <select id="schoolSelector" onchange="onSuperuserSchoolChange()" style="padding: 8px;">
@@ -99,15 +95,26 @@
   </div>
 
   <button id="downloadBtn" style="display: none;">Download Certificate</button>
+  <button id="resetBtn" onclick="resetCertificate()" style="
+    display: none;
+    margin-left: 17px;
+    background: linear-gradient(135deg, #dc8888, #ff1a1a, #c15151);
+    background-size: 200% auto;
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
+  ">Reset</button>
 
-  <!-- 🔔 Logout popup -->
+  <!-- Logout popup -->
   <div id="logoutPopup">✅ You have been logged out due to inactivity.</div>
 
   <script>
     const superuserEmail = "hrishavranjan2003@gmail.com";
-    let currentEmail = "";
-    let folderKey = "";
-    let isSuperuser = false;
+    let currentEmail = "", folderKey = "", isSuperuser = false;
 
     const emailMap = {
       "umssimariwest84722@gmail.com": "umss",
@@ -131,9 +138,7 @@
       if (!user) return window.location.href = "login.html";
       currentEmail = user.email;
       document.getElementById("userEmail").textContent = "✅ Logged in as: " + currentEmail;
-
       isSuperuser = currentEmail === superuserEmail;
-
       if (isSuperuser) {
         document.getElementById("schoolSelectorContainer").style.display = "block";
       } else {
@@ -157,10 +162,7 @@
     function loadTemplateAndCss() {
       const type = document.getElementById("certType").value;
       const key = folderKey;
-      const emailForTemplate = isSuperuser
-        ? (schoolEmailMap[key] || "superuser")
-        : currentEmail;
-
+      const emailForTemplate = isSuperuser ? (schoolEmailMap[key] || "superuser") : currentEmail;
       document.getElementById("templateImg").src = `templates/${type}/${emailForTemplate}.png`;
       document.getElementById("userCertCss").href = `css/${key}/${type}.css`;
     }
@@ -173,11 +175,9 @@
       document.getElementById("o_father").innerText = document.getElementById("fatherName").value.trim();
       document.getElementById("o_event").innerText = document.getElementById("eventName").value.trim();
 
-      // ✅ Date format: 25-06-25
       const rawDate = document.getElementById("date").value;
-      const dateParts = rawDate.split("-");
-      const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0].slice(2)}`;
-      document.getElementById("o_date").innerText = formattedDate;
+      const [y, m, d] = rawDate.split("-");
+      document.getElementById("o_date").innerText = `${d}-${m}-${y.slice(2)}`;
 
       const certType = document.getElementById("certType").value;
       if (certType === "excellence") {
@@ -189,6 +189,7 @@
 
       document.getElementById("certificate").style.display = "block";
       document.getElementById("downloadBtn").style.display = "inline-block";
+      document.getElementById("resetBtn").style.display = "inline-block";
     };
 
     document.getElementById("downloadBtn").onclick = () => {
@@ -202,6 +203,13 @@
       });
     };
 
+    function resetCertificate() {
+      document.getElementById("certForm").reset();
+      document.getElementById("certificate").style.display = "none";
+      document.getElementById("downloadBtn").style.display = "none";
+      document.getElementById("resetBtn").style.display = "none";
+    }
+
     function manualLogout() {
       if (confirm("Are you sure you want to logout?")) {
         firebase.auth().signOut().then(() => {
@@ -210,7 +218,6 @@
       }
     }
 
-    // ⏳ Inactivity logout with popup
     let inactivityTimer;
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
@@ -221,7 +228,7 @@
             window.location.href = "login.html";
           });
         }, 2000);
-      }, 600000);
+      }, 600000); // 10 minutes
     }
 
     ['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(evt =>
