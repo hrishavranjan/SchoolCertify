@@ -1,4 +1,4 @@
-<!-- Add this in your <body> as-is — already includes reset functionality -->
+<!-- ✅ Final Updated Certificate Generator -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +29,6 @@
       font-size: 16px;
       animation: fadeIn 0.5s ease;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translate(-50%, -60%); }
       to   { opacity: 1; transform: translate(-50%, -50%); }
@@ -42,10 +41,10 @@
   <p id="userEmail"></p>
   <button id="logoutBtn" onclick="manualLogout()">Logout</button>
 
-  <!-- Superuser School Selector -->
+  <!-- School Selector -->
   <div id="schoolSelectorContainer" style="display: none; margin: 15px;">
-    <label style="margin-right: 5px;">Select School:</label>
-    <select id="schoolSelector" onchange="onSuperuserSchoolChange()" style="padding: 8px;">
+    <label>Select School:</label>
+    <select id="schoolSelector" onchange="onSuperuserSchoolChange()">
       <option value="">--Choose--</option>
       <option value="ums">UMS</option>
       <option value="dps">DPS</option>
@@ -63,22 +62,28 @@
   <select id="certType" onchange="onCertTypeChange()">
     <option value="appreciation">Appreciation</option>
     <option value="excellence">Excellence</option>
-    <option value="completion">Completion</option>
+    <option value="sports">Sports</option>
     <option value="topper">Topper</option>
-    <option value="future1">Future 1</option>
-    <option value="future2">Future 2</option>
-    <option value="future3">Future 3</option>
+    <option value="Studentofyear">Student of the Year</option>
   </select>
 
   <!-- Certificate Form -->
   <form id="certForm" style="margin-top: 20px;">
     <input type="text" id="studentName" placeholder="Student Name" required /><br>
+    <input type="number" id="fontSize" placeholder="Name Font Size (e.g. 32)" /><br>
     <input type="text" id="className" placeholder="Class" required /><br>
     <input type="text" id="rollNumber" placeholder="Roll Number" required /><br>
     <input type="text" id="fatherName" placeholder="Father's Name" required /><br>
-    <input type="text" id="eventName" placeholder="Event Name" required /><br>
-    <input type="date" id="date" required /><br>
-    <input type="text" id="rank" placeholder="Rank (for Excellence only)" style="display: none;" /><br>
+
+    <div id="eventInputWrapper">
+      <input type="text" id="eventName" placeholder="Event Name" required /><br>
+    </div>
+    <div id="dateInputWrapper">
+      <input type="date" id="date" required /><br>
+    </div>
+
+    <input type="text" id="rank" placeholder="Rank (for Excellence/Sports)" style="display: none;" /><br>
+    <input type="text" id="academicYear" placeholder="Academic Year (e.g. 2022-2023)" style="display: none;" /><br>
     <button type="submit">Generate Certificate</button>
   </form>
 
@@ -92,6 +97,7 @@
     <div class="overlay eventOverlay" id="o_event">________</div>
     <div class="overlay dateOverlay" id="o_date">________</div>
     <div class="overlay rankOverlay" id="o_rank" style="display: none;">________</div>
+    <div class="overlay yearOverlay" id="o_year" style="display: none;">________</div>
   </div>
 
   <button id="downloadBtn" style="display: none;">Download Certificate</button>
@@ -109,9 +115,7 @@
     box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
   ">Reset</button>
 
-  <!-- Logout popup -->
-  <div id="logoutPopup">✅ You have been logged out due to inactivity.</div>
-
+  <!-- JavaScript -->
   <script>
     const superuserEmail = "hrishavranjan2003@gmail.com";
     let currentEmail = "", folderKey = "", isSuperuser = false;
@@ -154,10 +158,29 @@
     }
 
     function onCertTypeChange() {
-      const type = document.getElementById("certType").value;
-      document.getElementById("rank").style.display = type === "excellence" ? "inline-block" : "none";
-      loadTemplateAndCss();
-    }
+  const type = document.getElementById("certType").value;
+
+  const eventInput = document.getElementById("eventName");
+  const dateInput = document.getElementById("date");
+
+  document.getElementById("rank").style.display = (type === "excellence" || type === "sports") ? "inline-block" : "none";
+  document.getElementById("academicYear").style.display = (type === "Studentofyear") ? "inline-block" : "none";
+
+  if (type === "Studentofyear") {
+    document.getElementById("eventInputWrapper").style.display = "none";
+    document.getElementById("dateInputWrapper").style.display = "none";
+    eventInput.removeAttribute("required");
+    dateInput.removeAttribute("required");
+  } else {
+    document.getElementById("eventInputWrapper").style.display = "block";
+    document.getElementById("dateInputWrapper").style.display = "block";
+    eventInput.setAttribute("required", "true");
+    dateInput.setAttribute("required", "true");
+  }
+
+  loadTemplateAndCss();
+}
+
 
     function loadTemplateAndCss() {
       const type = document.getElementById("certType").value;
@@ -169,22 +192,40 @@
 
     document.getElementById("certForm").onsubmit = function (e) {
       e.preventDefault();
+      const certType = document.getElementById("certType").value;
+
       document.getElementById("o_name").innerText = document.getElementById("studentName").value.trim();
+      const fontSize = parseInt(document.getElementById("fontSize").value);
+      if (!isNaN(fontSize)) document.getElementById("o_name").style.fontSize = fontSize + "px";
+
       document.getElementById("o_class").innerText = document.getElementById("className").value.trim();
       document.getElementById("o_roll").innerText = document.getElementById("rollNumber").value.trim();
       document.getElementById("o_father").innerText = document.getElementById("fatherName").value.trim();
-      document.getElementById("o_event").innerText = document.getElementById("eventName").value.trim();
 
-      const rawDate = document.getElementById("date").value;
-      const [y, m, d] = rawDate.split("-");
-      document.getElementById("o_date").innerText = `${d}-${m}-${y.slice(2)}`;
+      if (certType !== "Studentofyear") {
+        const [y, m, d] = document.getElementById("date").value.split("-");
+        document.getElementById("o_date").innerText = `${d}-${m}-${y}`;
+        document.getElementById("o_date").style.display = "block";
+        document.getElementById("o_event").innerText = document.getElementById("eventName").value.trim();
+        document.getElementById("o_event").style.display = "block";
+      } else {
+        document.getElementById("o_date").style.display = "none";
+        document.getElementById("o_event").style.display = "none";
+        document.getElementById("o_event").innerText = "";
+      }
 
-      const certType = document.getElementById("certType").value;
-      if (certType === "excellence") {
+      if (certType === "excellence" || certType === "sports") {
         document.getElementById("o_rank").innerText = document.getElementById("rank").value.trim();
         document.getElementById("o_rank").style.display = "block";
       } else {
         document.getElementById("o_rank").style.display = "none";
+      }
+
+      if (certType === "Studentofyear") {
+        document.getElementById("o_year").innerText = document.getElementById("academicYear").value.trim();
+        document.getElementById("o_year").style.display = "block";
+      } else {
+        document.getElementById("o_year").style.display = "none";
       }
 
       document.getElementById("certificate").style.display = "block";
@@ -228,10 +269,10 @@
             window.location.href = "login.html";
           });
         }, 2000);
-      }, 600000); // 10 minutes
+      }, 600000);
     }
 
-    ['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(evt =>
+    ["click", "keydown", "mousemove", "scroll", "touchstart"].forEach(evt =>
       window.addEventListener(evt, resetInactivityTimer)
     );
     resetInactivityTimer();
